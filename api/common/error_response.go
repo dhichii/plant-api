@@ -27,3 +27,10 @@ func InternalServerErrorResponse() response {
 		"Internal server error",
 	}
 }
+
+func ConflictResponse(msg string) response {
+	return response{
+		http.StatusConflict,
+		msg,
+	}
+}
