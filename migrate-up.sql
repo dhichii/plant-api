@@ -3,8 +3,11 @@ CREATE TABLE users(
   name VARCHAR(120),
   email VARCHAR(255) UNIQUE,
   password VARCHAR(255),
-  is_admin BOOLEAN,
+  role VARCHAR(5),
   created_at DATETIME(3),
   updated_at DATETIME(3),
   deleted_at DATETIME(3)
 );
+
+INSERT users(name, email, password, role, created_at, updated_at)
+VALUES ('super', 'super@company.com', 'super123', 'super', NOW(), NOW());
