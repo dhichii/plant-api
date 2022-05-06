@@ -6,17 +6,17 @@ import (
 )
 
 type Config struct {
-	Port int
+	Port             int
 	ConnectionString string
 }
 
 func NewConfig() (Config, error) {
-	port, err := strconv.Atoi(getEnv("PORT", "8080")); 
+	port, err := strconv.Atoi(getEnv("PORT", "8080"))
 	if err != nil {
 		return Config{}, err
 	}
 	return Config{
-		Port: port,
+		Port:             port,
 		ConnectionString: getEnv("CONNECTION_STRING", "root:123456@tcp(localhost:3306)/plantapi?charset=utf8&parseTime=True&loc=Local"),
 	}, err
 }
