@@ -8,6 +8,7 @@ import (
 type Config struct {
 	Port             int
 	ConnectionString string
+	JWTSecret        string
 }
 
 func NewConfig() (Config, error) {
@@ -18,6 +19,7 @@ func NewConfig() (Config, error) {
 	return Config{
 		Port:             port,
 		ConnectionString: getEnv("CONNECTION_STRING", "root:123456@tcp(localhost:3306)/plantapi?charset=utf8&parseTime=True&loc=Local"),
+		JWTSecret:        getEnv("JWT_SECRET", "RAHASIA"),
 	}, err
 }
 
