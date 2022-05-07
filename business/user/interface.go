@@ -5,6 +5,7 @@ type Repository interface {
 	Create(user User) error
 	GetAll() ([]User, error)
 	Get(id int) (*User, error)
+	GetByEmail(email string) (*User, error)
 	Update(id int, user User) error
 }
 
