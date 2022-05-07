@@ -6,17 +6,21 @@ import (
 	"plant-api/business/user"
 	"plant-api/config"
 	"strings"
+	"time"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
-func AuthorizeJWT(secret string) echo.MiddlewareFunc {
-	return middleware.JWTWithConfig(middleware.JWTConfig{
-		SigningMethod: "HS256",
-		SigningKey: []byte(secret),
-	})
+// Generate JWT
+func GenerateJWT(id int, role, secret string) (string, error) {
+	claims := jwt.MapClaims{}
+	claims["authorized"] = true
+	claims["id"] = id
+	claims["role"] = role
+	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(secret))
 }
 
 // Get and parse JWT from header
