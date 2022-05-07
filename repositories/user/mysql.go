@@ -39,10 +39,22 @@ func (repo *repository) GetAll() ([]user.User, error) {
 	return users, nil
 }
 
-// Get user by given id. Its return nil if not found
+// Get user by given id. It's return nil if not found
 func (repo *repository) Get(id int) (*user.User, error) {
 	user := user.User{}
 	if err := repo.db.First(&user, id).Error; err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
+// Get user by given email. It's return nil if not found
+func (repo *repository) GetByEmail(email string) (*user.User, error) {
+	user := user.User{}
+	if err := repo.db.Where("email = ?", email).First(&user).Error; err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
