@@ -34,3 +34,10 @@ func ConflictResponse(msg string) response {
 		msg,
 	}
 }
+
+func UnauthorizedResponse(msg string) response {
+	return response{
+		http.StatusUnauthorized,
+		msg,
+	}
+}
