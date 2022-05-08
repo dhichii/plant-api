@@ -29,12 +29,6 @@ func (controller *Controller) Login(c echo.Context) error {
 		if err == business.ErrBadRequest {
 			return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
 		}
-		if err == business.ErrNotFound {
-			return c.JSON(
-				http.StatusUnauthorized,
-				common.UnauthorizedResponse("Invalid email or password"),
-			)
-		}
 		return c.JSON(
 			http.StatusInternalServerError,
 			common.InternalServerErrorResponse(),

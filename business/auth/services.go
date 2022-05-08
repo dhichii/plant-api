@@ -26,6 +26,9 @@ func NewService(repo user.Repository, cfg config.Config) Service {
 func (s *service) Login(email, password string) (string, error) {
 	user, err := s.repo.GetByEmail(email)
 	if err != nil {
+		if err.Error() == "record not found" {
+			return "", nil
+		}
 		return "", err
 	}
 	if user != nil {

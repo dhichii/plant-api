@@ -99,13 +99,13 @@ func (controller *Controller) Get(c echo.Context) error {
 
 	user, err := controller.service.Get(id)
 	if err != nil {
+		if err == business.ErrNotFound {
+			return c.JSON(http.StatusNotFound, common.NotFoundResponse())
+		}
 		return c.JSON(
 			http.StatusInternalServerError,
 			common.InternalServerErrorResponse(),
 		)
-	}
-	if user == nil {
-		return c.JSON(http.StatusNotFound, common.NotFoundResponse())
 	}
 	return c.JSON(http.StatusOK, GetResponse(*user))
 }
