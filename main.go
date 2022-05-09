@@ -23,8 +23,8 @@ func main() {
 		panic(err)
 	}
 
-	controller := modules.RegisterModules(db)
+	controller := modules.RegisterModules(db, cfg)
 	app := echo.New()
-	api.InitRouter(app, controller)
+	api.InitRouter(app, controller, cfg.JWTSecret)
 	app.Logger.Fatal(app.Start(fmt.Sprintf(":%d", cfg.Port)))
 }

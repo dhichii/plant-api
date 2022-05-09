@@ -3,6 +3,7 @@ package user
 import (
 	"net/http"
 	"plant-api/api/common"
+	"plant-api/api/middleware"
 	"plant-api/business"
 	"plant-api/business/user"
 	"strconv"
@@ -22,6 +23,19 @@ func NewController(service user.Service) *Controller {
 
 // Controller to create user
 func (controller *Controller) Create(c echo.Context) error {
+	claims, err := middleware.ParseJWT(c)
+	if err != nil {
+		return c.JSON(
+			http.StatusUnauthorized,
+			common.UnauthorizedResponse(err.Error()),
+		)
+	}
+	if !common.ValidateByRole("super", claims.Role) {
+		return c.JSON(
+			http.StatusUnauthorized,
+			common.UnauthorizedResponse("Unauthorized"),
+		)
+	}
 	newUser := user.User{}
 	c.Bind(&newUser)
 	newUser.Role = "admin"
@@ -30,7 +44,7 @@ func (controller *Controller) Create(c echo.Context) error {
 		if err == business.ErrConflict {
 			return c.JSON(
 				http.StatusConflict,
-				common.ConflictResponse("Email is already used"),
+				common.ConflictResponse("email is already used"),
 			)
 		}
 		return c.JSON(
@@ -43,6 +57,19 @@ func (controller *Controller) Create(c echo.Context) error {
 
 // Controller to get all users
 func (controller *Controller) GetAll(c echo.Context) error {
+	claims, err := middleware.ParseJWT(c)
+	if err != nil {
+		return c.JSON(
+			http.StatusUnauthorized,
+			common.UnauthorizedResponse(err.Error()),
+		)
+	}
+	if !common.ValidateByRole("super", claims.Role) {
+		return c.JSON(
+			http.StatusUnauthorized,
+			common.UnauthorizedResponse("Unauthorized"),
+		)
+	}
 	users, err := controller.service.GetAll()
 	if err != nil {
 		return c.JSON(
@@ -56,15 +83,29 @@ func (controller *Controller) GetAll(c echo.Context) error {
 // Controller to get user by given id
 func (controller *Controller) Get(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
+	claims, err := middleware.ParseJWT(c)
+	if err != nil {
+		return c.JSON(
+			http.StatusUnauthorized,
+			common.UnauthorizedResponse(err.Error()),
+		)
+	}
+	if !common.ValidateById(id, claims.ID, claims.Role) {
+		return c.JSON(
+			http.StatusUnauthorized,
+			common.UnauthorizedResponse("Unauthorized"),
+		)
+	}
+
 	user, err := controller.service.Get(id)
 	if err != nil {
+		if err == business.ErrNotFound {
+			return c.JSON(http.StatusNotFound, common.NotFoundResponse())
+		}
 		return c.JSON(
 			http.StatusInternalServerError,
 			common.InternalServerErrorResponse(),
 		)
-	}
-	if user == nil {
-		return c.JSON(http.StatusNotFound, common.NotFoundResponse())
 	}
 	return c.JSON(http.StatusOK, GetResponse(*user))
 }
