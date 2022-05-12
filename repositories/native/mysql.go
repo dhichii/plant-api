@@ -1,6 +1,7 @@
 package native
 
 import (
+	"plant-api/api/v1/native/response"
 	"plant-api/business/native"
 
 	"gorm.io/gorm"
@@ -24,8 +25,8 @@ func (repo *repository) Create(native *native.Native) error {
 }
 
 // Get all natives
-func (repo *repository) GetAll() ([]native.Native, error) {
-	natives := []native.Native{}
+func (repo *repository) GetAll() ([]response.Native, error) {
+	natives := []response.Native{}
 	if err := repo.db.Find(&natives).Error; err != nil {
 		return nil, err
 	}
@@ -33,8 +34,8 @@ func (repo *repository) GetAll() ([]native.Native, error) {
 }
 
 // Get native by given id. It's return nil if not found
-func (repo *repository) Get(id int) (*native.Native, error) {
-	native := native.Native{}
+func (repo *repository) Get(id int) (*response.Native, error) {
+	native := response.Native{}
 	if err := repo.db.First(&native, id).Error; err != nil {
 		return nil, err
 	}
