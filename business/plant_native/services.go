@@ -9,7 +9,7 @@ func NewService(repo Repository) Service {
 	return &service{repo}
 }
 
-// Delete plant native by given id
-func (s *service) Delete(id int) error {
-	return s.repo.Delete(id)
+// Delete plant native by given plant id
+func (s *service) Delete(plantID int) error {
+	return s.repo.Delete(plantID)
 }
