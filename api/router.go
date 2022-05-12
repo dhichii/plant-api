@@ -3,6 +3,7 @@ package api
 import (
 	authController "plant-api/api/v1/auth"
 	userV1Controller "plant-api/api/v1/user"
+	nativeV1Controller "plant-api/api/v1/native"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -11,6 +12,7 @@ import (
 type Controller struct {
 	UserV1Controller *userV1Controller.Controller
 	AuthController   *authController.Controller
+	NativeController *nativeV1Controller.Controller
 }
 
 func InitRouter(e *echo.Echo, controller Controller, jwtSecret string) {
@@ -25,4 +27,8 @@ func InitRouter(e *echo.Echo, controller Controller, jwtSecret string) {
 
 	// Auth route
 	v1.POST("/login", controller.AuthController.Login)
+
+	// Native route
+	v1.POST("/natives", controller.NativeController.Create)
+	v1.GET("/natives", controller.NativeController.GetAll)
 }
