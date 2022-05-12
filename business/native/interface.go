@@ -6,7 +6,6 @@ import "plant-api/api/v1/native/response"
 type Repository interface {
 	Create(*Native) error
 	GetAll() ([]response.Native, error)
-	Get(id int) (*response.Native, error)
 	GetByName(string) (*Native, error)
 }
 
@@ -14,6 +13,5 @@ type Repository interface {
 type Service interface {
 	Create(*Native) error
 	GetAll() ([]response.Native, error)
-	Get(id int) (*response.Native, error)
 	GetByName(name string) (*Native, error)
 }

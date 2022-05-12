@@ -2,7 +2,6 @@ package native
 
 import (
 	"plant-api/api/v1/native/response"
-	"plant-api/business"
 )
 
 type service struct {
@@ -25,18 +24,6 @@ func (s *service) Create(native *Native) error {
 // Get all natives
 func (s *service) GetAll() ([]response.Native, error) {
 	return s.repository.GetAll()
-}
-
-// Get native by given id
-func (s *service) Get(id int) (*response.Native, error) {
-	native, err := s.repository.Get(id)
-	if err.Error() == "record not found" {
-		return nil, business.ErrNotFound
-	}
-	if err != nil {
-		return nil, err
-	}
-	return native, nil
 }
 
 // Get native by given name

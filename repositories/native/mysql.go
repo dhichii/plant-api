@@ -33,15 +33,6 @@ func (repo *repository) GetAll() ([]response.Native, error) {
 	return natives, nil
 }
 
-// Get native by given id. It's return nil if not found
-func (repo *repository) Get(id int) (*response.Native, error) {
-	native := response.Native{}
-	if err := repo.db.First(&native, id).Error; err != nil {
-		return nil, err
-	}
-	return &native, nil
-}
-
 // Get native by given name. It's return nil if not found
 func (repo *repository) GetByName(name string) (*native.Native, error) {
 	native := native.Native{}
