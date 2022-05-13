@@ -3,6 +3,7 @@ package plant
 import (
 	"net/http"
 	"plant-api/api/common"
+	"plant-api/business"
 	"plant-api/business/plant"
 	"strconv"
 
@@ -29,9 +30,13 @@ func (controller *Controller) Create(c echo.Context) error {
 	return c.JSON(http.StatusCreated, common.SuccessResponseWithoutData())
 }
 
-// Controller to get all plant
+// Controller to get all plant by given name from query
 func (controller *Controller) GetAll(c echo.Context) error {
-	plant, err := controller.service.GetAll()
+	name := c.QueryParam("name")
+	plant, err := controller.service.GetAll(name)
+	if err == business.ErrNotFound {
+		return c.JSON(http.StatusNotFound, common.NotFoundResponse())
+	}
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, common.InternalServerErrorResponse())
 	}
@@ -39,14 +44,14 @@ func (controller *Controller) GetAll(c echo.Context) error {
 }
 
 // Controller to get all plant by given name
-func (controller *Controller) GetByName(c echo.Context) error {
-	name := c.QueryParam("name")
-	plant, err := controller.service.GetByName(name)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, common.InternalServerErrorResponse())
-	}
-	return c.JSON(http.StatusOK, plant)
-}
+// func (controller *Controller) GetByName(c echo.Context) error {
+// 	name := c.QueryParam("name")
+// 	plant, err := controller.service.GetByName(name)
+// 	if err != nil {
+// 		return c.JSON(http.StatusInternalServerError, common.InternalServerErrorResponse())
+// 	}
+// 	return c.JSON(http.StatusOK, plant)
+// }
 
 // Controller to get plant detail
 func (controller *Controller) GetDetail(c echo.Context) error {

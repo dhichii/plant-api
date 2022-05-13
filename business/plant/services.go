@@ -59,14 +59,19 @@ func (s *service) Create(plant *Plant) error {
 	return nil
 }
 
-// Get all plants
-func (s *service) GetAll() ([]response.Plant, error) {
-	return s.repository.GetAll()
-}
-
-// Get all plants by given name
-func (s *service) GetByName(name string) ([]response.Plant, error) {
-	return s.repository.GetByName(name)
+/*
+Get all plants by given name
+will return ErrNotFound when plant is not exist
+*/
+func (s *service) GetAll(name string) ([]response.Plant, error) {
+	plants, err := s.repository.GetAll(name)
+	if len(plants) < 1 {
+		return nil, business.ErrNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return plants, nil
 }
 
 // Get detail plant by given id
@@ -76,7 +81,7 @@ func (s *service) GetDetail(id int) (*response.PlantDetail, error) {
 
 /*
 Update existing plant in database
-will return ErrNotFound when user is not exist
+will return ErrNotFound when plant is not exist
 */
 func (s *service) Update(id int, plant Plant) error {
 	if err := s.repository.Update(id, plant); err != nil {

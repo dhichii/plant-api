@@ -27,24 +27,18 @@ func (repo *repository) Create(plant *plant.Plant) error {
 	return nil
 }
 
-// Get all plants
-func (repo *repository) GetAll() ([]response.Plant, error) {
+/*
+Get all plants by given name
+it will return all plants if name is null
+*/
+func (repo *repository) GetAll(name string) ([]response.Plant, error) {
 	plants := []response.Plant{}
-	if err := repo.db.Where("deleted_at IS NULL").Find(&plants).Error; err != nil {
+	if err := repo.db.Where("deleted_at IS NULL AND name LIKE '%" + name + "%'").
+	Find(&plants).
+	Error; err != nil {
 		return nil, err
 	}
 	return plants, nil
-}
-
-// Get all plants by given name
-func (repo *repository) GetByName(name string) ([]response.Plant, error) {
-	plant := []response.Plant{}
-	if err := repo.db.Where("deleted_at IS NULL AND name LIKE '%" + name + "%'").
-		Find(&plant).
-		Error; err != nil {
-		return nil, err
-	}
-	return plant, nil
 }
 
 // Get plant by given id
