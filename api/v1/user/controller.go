@@ -23,6 +23,7 @@ func NewController(service user.Service) *Controller {
 
 // Controller to create user
 func (controller *Controller) Create(c echo.Context) error {
+	// Validate token and authorize if role is super
 	claims, err := middleware.ParseJWT(c)
 	if err != nil {
 		return c.JSON(
@@ -57,6 +58,7 @@ func (controller *Controller) Create(c echo.Context) error {
 
 // Controller to get all users
 func (controller *Controller) GetAll(c echo.Context) error {
+	// Validate token and authorize if role is super
 	claims, err := middleware.ParseJWT(c)
 	if err != nil {
 		return c.JSON(
@@ -83,6 +85,7 @@ func (controller *Controller) GetAll(c echo.Context) error {
 // Controller to get user by given id
 func (controller *Controller) Get(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
+	// Validate token and authorize if user has same id or role is super
 	claims, err := middleware.ParseJWT(c)
 	if err != nil {
 		return c.JSON(
@@ -113,6 +116,21 @@ func (controller *Controller) Get(c echo.Context) error {
 // Controller to update user
 func (controller *Controller) Update(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
+	// Validate token and authorize if user has same id or role is super
+	claims, err := middleware.ParseJWT(c)
+	if err != nil {
+		return c.JSON(
+			http.StatusUnauthorized,
+			common.UnauthorizedResponse(err.Error()),
+		)
+	}
+	if !common.ValidateById(id, claims.ID, claims.Role) {
+		return c.JSON(
+			http.StatusUnauthorized,
+			common.UnauthorizedResponse("Unauthorized"),
+		)
+	}
+
 	user := user.User{}
 	c.Bind(&user)
 

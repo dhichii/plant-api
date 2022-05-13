@@ -20,24 +20,27 @@ type Controller struct {
 func InitRouter(e *echo.Echo, controller Controller, jwtSecret string) {
 	v1 := e.Group("/v1")
 
-	jwtMiddleware := middleware.JWT([]byte(jwtSecret))
+	// Create auth JWT group
+	authV1 := v1.Group("")
+	authV1.Use(middleware.JWT([]byte(jwtSecret)))
+
 	// User Admin route
-	v1.POST("/admin", controller.UserV1Controller.Create, jwtMiddleware)
-	v1.GET("/admin", controller.UserV1Controller.GetAll, jwtMiddleware)
-	v1.GET("/admin/:id", controller.UserV1Controller.Get, jwtMiddleware)
-	v1.PUT("/admin/:id", controller.UserV1Controller.Update, jwtMiddleware)
+	authV1.POST("/admin", controller.UserV1Controller.Create)
+	authV1.GET("/admin", controller.UserV1Controller.GetAll)
+	authV1.GET("/admin/:id", controller.UserV1Controller.Get)
+	authV1.PUT("/admin/:id", controller.UserV1Controller.Update)
 
 	// Auth route
 	v1.POST("/login", controller.AuthController.Login)
 
 	// Native route
-	v1.POST("/natives", controller.NativeController.Create)
-	v1.GET("/natives", controller.NativeController.GetAll)
+	authV1.POST("/natives", controller.NativeController.Create)
+	authV1.GET("/natives", controller.NativeController.GetAll)
 
 	// Plant route
-	v1.POST("/plants", controller.PlantController.Create)
+	authV1.POST("/plants", controller.PlantController.Create)
+	authV1.PUT("/plants/:id", controller.PlantController.Update)
+	authV1.DELETE("/plants/:id", controller.PlantController.Delete)
 	v1.GET("/plants", controller.PlantController.GetAll)
 	v1.GET("/plants/:id", controller.PlantController.GetDetail)
-	v1.PUT("/plants/:id", controller.PlantController.Update)
-	v1.DELETE("/plants/:id", controller.PlantController.Delete)
 }
