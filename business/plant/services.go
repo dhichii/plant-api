@@ -74,9 +74,19 @@ func (s *service) GetAll(name string) ([]response.Plant, error) {
 	return plants, nil
 }
 
-// Get detail plant by given id
+/*
+Get detail plant by given id
+will return ErrNotFound if plant is not exist
+*/
 func (s *service) GetDetail(id int) (*response.PlantDetail, error) {
-	return s.repository.GetDetail(id)
+	plant, err := s.repository.GetDetail(id)
+	if err != nil {
+		if err.Error() == "record not found" {
+			return nil, business.ErrNotFound
+		}
+		return nil, err
+	}
+	return plant, nil
 }
 
 /*
@@ -84,17 +94,31 @@ Update existing plant in database
 will return ErrNotFound when plant is not exist
 */
 func (s *service) Update(id int, plant Plant) error {
-	if err := s.repository.Update(id, plant); err != nil {
+	_, err := s.repository.GetDetail(id)
+	if err != nil {
 		if err.Error() == "record not found" {
 			return business.ErrNotFound
 		}
 		return err
 	}
+	if err := s.repository.Update(id, plant); err != nil {
+		return err
+	}
 	return nil
 }
 
-// Delete plant native and plant
+/*
+Delete plant native and plant
+will return ErrNotFound when plant is not exist
+*/
 func (s *service) Delete(id int) error {
+	_, err := s.repository.GetDetail(id)
+	if err != nil {
+		if err.Error() == "record not found" {
+			return business.ErrNotFound
+		}
+		return err
+	}
 	if err := s.pNativeService.Delete(id); err != nil {
 		return err
 	}
