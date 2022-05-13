@@ -30,7 +30,7 @@ func (repo *repository) Create(plant *plant.Plant) error {
 // Get all plants
 func (repo *repository) GetAll() ([]response.Plant, error) {
 	plants := []response.Plant{}
-	if err := repo.db.Find(&plants).Error; err != nil {
+	if err := repo.db.Where("deleted_at IS NULL").Find(&plants).Error; err != nil {
 		return nil, err
 	}
 	return plants, nil
@@ -39,7 +39,9 @@ func (repo *repository) GetAll() ([]response.Plant, error) {
 // Get all plants by given name
 func (repo *repository) GetByName(name string) ([]response.Plant, error) {
 	plant := []response.Plant{}
-	if err := repo.db.Where("name LIKE '%" + name + "%'").Find(&plant).Error; err != nil {
+	if err := repo.db.Where("deleted_at IS NULL AND name LIKE '%" + name + "%'").
+		Find(&plant).
+		Error; err != nil {
 		return nil, err
 	}
 	return plant, nil
@@ -48,7 +50,7 @@ func (repo *repository) GetByName(name string) ([]response.Plant, error) {
 // Get plant by given id
 func (repo *repository) GetDetail(id int) (*response.PlantDetail, error) {
 	plant := &response.PlantDetail{}
-	if err := repo.db.Table("plants").First(&plant, id).Error; err != nil {
+	if err := repo.db.Table("plants").Where("deleted_at IS NULL").First(&plant, id).Error; err != nil {
 		return nil, err
 	}
 	// Find plant natives that related to plant
