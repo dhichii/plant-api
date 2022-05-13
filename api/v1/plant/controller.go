@@ -43,21 +43,14 @@ func (controller *Controller) GetAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, plant)
 }
 
-// Controller to get all plant by given name
-// func (controller *Controller) GetByName(c echo.Context) error {
-// 	name := c.QueryParam("name")
-// 	plant, err := controller.service.GetByName(name)
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, common.InternalServerErrorResponse())
-// 	}
-// 	return c.JSON(http.StatusOK, plant)
-// }
-
 // Controller to get plant detail
 func (controller *Controller) GetDetail(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	plant, err := controller.service.GetDetail(id)
 	if err != nil {
+		if err == business.ErrNotFound {
+			return c.JSON(http.StatusNotFound, common.NotFoundResponse())
+		}
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, plant)
@@ -69,6 +62,9 @@ func (controller *Controller) Update(c echo.Context) error {
 	plant := plant.Plant{}
 	c.Bind(&plant)
 	if err := controller.service.Update(id, plant); err != nil {
+		if err == business.ErrNotFound {
+			return c.JSON(http.StatusNotFound, common.NotFoundResponse())
+		}
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, common.SuccessResponseWithoutData())
@@ -78,6 +74,9 @@ func (controller *Controller) Update(c echo.Context) error {
 func (controller *Controller) Delete(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	if err := controller.service.Delete(id); err != nil {
+		if err == business.ErrNotFound {
+			return c.JSON(http.StatusNotFound, common.NotFoundResponse())
+		}
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, common.SuccessResponseWithoutData())
