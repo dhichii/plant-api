@@ -34,7 +34,7 @@ func (controller *Controller) Login(c echo.Context) error {
 			common.InternalServerErrorResponse(),
 		)
 	}
-	if token == "" {
+	if token == nil {
 		return c.JSON(
 			http.StatusUnauthorized,
 			common.UnauthorizedResponse("Invalid email or password"))

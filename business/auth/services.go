@@ -2,6 +2,7 @@ package auth
 
 import (
 	"plant-api/api/middleware"
+	"plant-api/api/v1/auth/response"
 	"plant-api/business"
 	"plant-api/business/user"
 	"plant-api/config"
@@ -23,25 +24,26 @@ func NewService(repo user.Repository, cfg config.Config) Service {
 }
 
 // Login by given user email and password, return empty if not found
-func (s *service) Login(email, password string) (string, error) {
+func (s *service) Login(email, password string) (*response.Token, error) {
 	user, err := s.repo.GetByEmail(email)
 	if err != nil {
 		if err.Error() == "record not found" {
-			return "", nil
+			return nil, nil
 		}
-		return "", err
+		return nil, err
 	}
 	if user != nil {
 		matchPassword := matchPassword(user.Password, []byte(password))
 		if user.Email == email && matchPassword {
 			token, err := middleware.GenerateJWT(int(user.ID), user.Role, s.cfg.JWTSecret)
 			if err != nil {
-				return "", business.ErrBadRequest
+				return nil, business.ErrBadRequest
 			}
-			return token, nil
+			tokenResponse := response.Token{Token: token}
+			return &tokenResponse, nil
 		}
 	}
-	return "", nil
+	return nil, nil
 }
 
 // Match password input with hashed password
