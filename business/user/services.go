@@ -36,10 +36,10 @@ func (s *service) GetAll() ([]User, error) {
 // Get user by given id
 func (s *service) Get(id int) (*User, error) {
 	user, err := s.repository.Get(id)
-	if err.Error() == "record not found" {
-		return nil, business.ErrNotFound
-	}
 	if err != nil {
+		if err.Error() == "record not found" {
+			return nil, business.ErrNotFound
+		}
 		return nil, err
 	}
 	return user, nil
@@ -51,10 +51,10 @@ will return ErrNotFound when user is not exist
 */
 func (s *service) Update(id int, user User) error {
 	_, err := s.repository.Get(id)
-	if err.Error() == "record not found" {
-		return business.ErrNotFound
-	}
 	if err != nil {
+		if err.Error() == "record not found" {
+			return business.ErrNotFound
+		}
 		return err
 	}
 	updatedUser := Modify(user.Name, user.Email, user.Password)
