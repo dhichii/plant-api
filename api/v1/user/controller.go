@@ -79,7 +79,7 @@ func (controller *Controller) GetAll(c echo.Context) error {
 			common.InternalServerErrorResponse(),
 		)
 	}
-	return c.JSON(http.StatusOK, GetAllResponse(users))
+	return c.JSON(http.StatusOK, users)
 }
 
 // Controller to get user by given id
@@ -110,7 +110,7 @@ func (controller *Controller) Get(c echo.Context) error {
 			common.InternalServerErrorResponse(),
 		)
 	}
-	return c.JSON(http.StatusOK, GetResponse(*user))
+	return c.JSON(http.StatusOK, user)
 }
 
 // Controller to update user
