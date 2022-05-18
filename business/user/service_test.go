@@ -3,8 +3,9 @@ package user_test
 import (
 	"errors"
 	"os"
+	"plant-api/api/v1/user/response"
 	"plant-api/business"
-	userBusiness "plant-api/business/user"
+	"plant-api/business/user"
 	"plant-api/business/user/mocks"
 	"testing"
 
@@ -22,14 +23,14 @@ const (
 
 var (
 	mockRepo     mocks.Repository
-	us           = userBusiness.NewService(&mockRepo)
-	mockUser     userBusiness.User
-	mockListUser []userBusiness.User
-	mockNewUser  userBusiness.User
+	us           = user.NewService(&mockRepo)
+	mockUser     response.User
+	mockListUser []response.User
+	mockNewUser  user.User
 )
 
 func setup() {
-	mockUser = userBusiness.User{
+	mockUser = response.User{
 		ID:       ID,
 		Name:     NAME,
 		Email:    EMAIL,
@@ -39,7 +40,7 @@ func setup() {
 
 	mockListUser = append(mockListUser, mockUser)
 
-	mockNewUser = userBusiness.User{
+	mockNewUser = user.User{
 		Name:     NAME,
 		Email:    EMAIL,
 		Password: PASSWORD,
