@@ -26,16 +26,10 @@ func (controller *Controller) Create(c echo.Context) error {
 	// Validate token and authorize if role is admin or super
 	claims, err := middleware.ParseJWT(c)
 	if err != nil {
-		return c.JSON(
-			http.StatusUnauthorized,
-			common.UnauthorizedResponse(err.Error()),
-		)
+		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
 	}
 	if !common.ValidateByRole("admin", claims.Role) {
-		return c.JSON(
-			http.StatusUnauthorized,
-			common.UnauthorizedResponse("Unauthorized"),
-		)
+		return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
 	}
 
 	newPlant := &plant.Plant{}
@@ -77,16 +71,10 @@ func (controller *Controller) Update(c echo.Context) error {
 	// Validate token and authorize if role is admin or super
 	claims, err := middleware.ParseJWT(c)
 	if err != nil {
-		return c.JSON(
-			http.StatusUnauthorized,
-			common.UnauthorizedResponse(err.Error()),
-		)
+		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
 	}
 	if !common.ValidateByRole("admin", claims.Role) {
-		return c.JSON(
-			http.StatusUnauthorized,
-			common.UnauthorizedResponse("Unauthorized"),
-		)
+		return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
 	}
 
 	id, _ := strconv.Atoi(c.Param("id"))
@@ -106,16 +94,10 @@ func (controller *Controller) Delete(c echo.Context) error {
 	// Validate token and authorize if role is admin or super
 	claims, err := middleware.ParseJWT(c)
 	if err != nil {
-		return c.JSON(
-			http.StatusUnauthorized,
-			common.UnauthorizedResponse(err.Error()),
-		)
+		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
 	}
 	if !common.ValidateByRole("admin", claims.Role) {
-		return c.JSON(
-			http.StatusUnauthorized,
-			common.UnauthorizedResponse("Unauthorized"),
-		)
+		return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
 	}
 
 	id, _ := strconv.Atoi(c.Param("id"))
