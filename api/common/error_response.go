@@ -41,3 +41,10 @@ func UnauthorizedResponse(msg string) response {
 		msg,
 	}
 }
+
+func ForbiddenResponse() response {
+	return response{
+		http.StatusForbidden,
+		"Forbidden",
+	}
+}
