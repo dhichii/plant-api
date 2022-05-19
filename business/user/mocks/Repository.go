@@ -3,9 +3,11 @@
 package mocks
 
 import (
-	testing "testing"
+	response "plant-api/api/v1/user/response"
 
 	mock "github.com/stretchr/testify/mock"
+
+	testing "testing"
 
 	user "plant-api/business/user"
 )
@@ -30,15 +32,15 @@ func (_m *Repository) Create(_a0 user.User) error {
 }
 
 // Get provides a mock function with given fields: id
-func (_m *Repository) Get(id int) (*user.User, error) {
+func (_m *Repository) Get(id int) (*response.User, error) {
 	ret := _m.Called(id)
 
-	var r0 *user.User
-	if rf, ok := ret.Get(0).(func(int) *user.User); ok {
+	var r0 *response.User
+	if rf, ok := ret.Get(0).(func(int) *response.User); ok {
 		r0 = rf(id)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*user.User)
+			r0 = ret.Get(0).(*response.User)
 		}
 	}
 
@@ -53,15 +55,15 @@ func (_m *Repository) Get(id int) (*user.User, error) {
 }
 
 // GetAll provides a mock function with given fields:
-func (_m *Repository) GetAll() ([]user.User, error) {
+func (_m *Repository) GetAll() ([]response.User, error) {
 	ret := _m.Called()
 
-	var r0 []user.User
-	if rf, ok := ret.Get(0).(func() []user.User); ok {
+	var r0 []response.User
+	if rf, ok := ret.Get(0).(func() []response.User); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]user.User)
+			r0 = ret.Get(0).([]response.User)
 		}
 	}
 
