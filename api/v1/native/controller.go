@@ -24,16 +24,10 @@ func (controller *Controller) Create(c echo.Context) error {
 	// Validate token and authorize if role is admin or super
 	claims, err := middleware.ParseJWT(c)
 	if err != nil {
-		return c.JSON(
-			http.StatusUnauthorized,
-			common.UnauthorizedResponse(err.Error()),
-		)
+		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
 	}
 	if !common.ValidateByRole("admin", claims.Role) {
-		return c.JSON(
-			http.StatusUnauthorized,
-			common.UnauthorizedResponse("Unauthorized"),
-		)
+		return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
 	}
 
 	newNative := &native.Native{}
@@ -49,16 +43,10 @@ func (controller *Controller) GetAll(c echo.Context) error {
 	// Validate token and authorize if role is admin or super
 	claims, err := middleware.ParseJWT(c)
 	if err != nil {
-		return c.JSON(
-			http.StatusUnauthorized,
-			common.UnauthorizedResponse(err.Error()),
-		)
+		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
 	}
 	if !common.ValidateByRole("admin", claims.Role) {
-		return c.JSON(
-			http.StatusUnauthorized,
-			common.UnauthorizedResponse("Unauthorized"),
-		)
+		return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
 	}
 
 	natives, err := controller.service.GetAll()

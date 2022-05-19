@@ -1,6 +1,7 @@
 package user
 
 import (
+	"plant-api/api/v1/user/response"
 	"plant-api/business"
 	"strings"
 )
@@ -29,12 +30,12 @@ func (s *service) Create(user User) error {
 }
 
 // Get all users
-func (s *service) GetAll() ([]User, error) {
+func (s *service) GetAll() ([]response.User, error) {
 	return s.repository.GetAll()
 }
 
 // Get user by given id
-func (s *service) Get(id int) (*User, error) {
+func (s *service) Get(id int) (*response.User, error) {
 	user, err := s.repository.Get(id)
 	if err != nil {
 		if err.Error() == "record not found" {
