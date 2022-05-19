@@ -10,7 +10,7 @@ CREATE TABLE users(
 );
 
 INSERT users(name, email, password, role, created_at, updated_at)
-VALUES ('super', 'super@company.com', '$2a$04$w4mbUkxHup/8TqTZDVlmFO9IviXHcHFPu/3KKp9UKDkCaTenOKS0O', 'super', NOW(), NOW());
+VALUES ('super', 'super@company.com', '$2y$10$VjLnduM2sscWqF.YMct9q.jAj/gBwVdJOD.g34Lqbn52NQhOqkBj.', 'super', NOW(), NOW());
 
 CREATE TABLE plants(
   id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
