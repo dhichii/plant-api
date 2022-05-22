@@ -1,0 +1,21 @@
+name: Deploy to Amazon EC2
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy-to-ec2:
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          cd ~/plant-api
+          git pull origin main
+          docker-compose down
+          docker-compose up --build -d

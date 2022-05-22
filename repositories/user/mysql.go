@@ -1,6 +1,7 @@
 package user
 
 import (
+	"plant-api/api/v1/user/response"
 	"plant-api/business/user"
 
 	"golang.org/x/crypto/bcrypt"
@@ -30,18 +31,18 @@ func (repo *repository) Create(user user.User) error {
 }
 
 // Get all users
-func (repo *repository) GetAll() ([]user.User, error) {
-	users := []user.User{}
-	if err := repo.db.Find(&users).Error; err != nil {
+func (repo *repository) GetAll() ([]response.User, error) {
+	users := []response.User{}
+	if err := repo.db.Where("deleted_at IS NULL").Find(&users).Error; err != nil {
 		return nil, err
 	}
 	return users, nil
 }
 
 // Get user by given id. It's return nil if not found
-func (repo *repository) Get(id int) (*user.User, error) {
-	user := user.User{}
-	if err := repo.db.First(&user, id).Error; err != nil {
+func (repo *repository) Get(id int) (*response.User, error) {
+	user := response.User{}
+	if err := repo.db.Where("deleted_at IS NULL").First(&user, id).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -50,7 +51,7 @@ func (repo *repository) Get(id int) (*user.User, error) {
 // Get user by given email. It's return nil if not found
 func (repo *repository) GetByEmail(email string) (*user.User, error) {
 	user := user.User{}
-	if err := repo.db.Where("email = ?", email).First(&user).Error; err != nil {
+	if err := repo.db.Where("email", email).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -69,7 +70,7 @@ func (repo *repository) Update(id int, user user.User) error {
 		user.Password = temp.Password
 	}
 	if err := repo.db.Model(&user).
-		Where("id = ?", id).
+		Where("id", id).
 		Updates(
 			userModel{
 				Name:     user.Name,
