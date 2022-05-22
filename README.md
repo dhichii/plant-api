@@ -1,5 +1,5 @@
 # Plant API
-Plant API is a REST API built with echo server. The code implementation uses Hexagonal Architecture. Below you will find a current list of the available methods on our plant, native, and user admin API.
+Plant API is a REST API built with Echo server. The code implementation uses Hexagonal Architecture. Below you will find a current list of the available methods on our plant, native, and user admin API.
 
 ## Requirements
 - [Docker](https://docs.docker.com/get-docker/)
@@ -33,7 +33,7 @@ See our [documentation](https://app.swaggerhub.com/apis-docs/dhichii/plant-api/v
 - Rest Server: **Echo v4**
 - Database: **MySQL**
 - ORM: **GORM**
-- Deployment: **Docker**, **AWS EC2**
+- Deployment: **Docker**, **Amazon EC2**
 - CI/CD: **Github Action**
 - Authorization: **JWT**
 - Unit Test: **Mockery (mocking)**, **Testify (testing toolkit)**
