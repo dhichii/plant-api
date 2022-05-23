@@ -40,8 +40,8 @@ func (s *service) Create(plant *Plant) error {
 		Soil:          plant.Soil,
 	}
 	/*
-	Find native by name
-	create new native if native not found
+		Find native by name
+		create new native if native not found
 	*/
 	for _, nativeRequest := range plant.Natives {
 		nativeData, _ := s.nativeService.GetByName(nativeRequest.Name)
@@ -59,19 +59,9 @@ func (s *service) Create(plant *Plant) error {
 	return nil
 }
 
-/*
-Get all plants by given name
-will return ErrNotFound when plant is not exist
-*/
+// Get all plants by given name
 func (s *service) GetAll(name string) ([]response.Plant, error) {
-	plants, err := s.repository.GetAll(name)
-	if len(plants) < 1 {
-		return nil, business.ErrNotFound
-	}
-	if err != nil {
-		return nil, err
-	}
-	return plants, nil
+	return s.repository.GetAll(name)
 }
 
 /*
