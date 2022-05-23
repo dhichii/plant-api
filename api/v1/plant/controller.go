@@ -44,9 +44,6 @@ func (controller *Controller) Create(c echo.Context) error {
 func (controller *Controller) GetAll(c echo.Context) error {
 	name := c.QueryParam("name")
 	plant, err := controller.service.GetAll(name)
-	if err == business.ErrNotFound {
-		return c.JSON(http.StatusNotFound, common.NotFoundResponse())
-	}
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, common.InternalServerErrorResponse())
 	}
