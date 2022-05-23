@@ -10,21 +10,21 @@ type response struct {
 func BadRequestResponse() response {
 	return response{
 		http.StatusBadRequest,
-		"Bad request",
+		"Bad Request",
 	}
 }
 
 func NotFoundResponse() response {
 	return response{
 		http.StatusNotFound,
-		"Not found",
+		"Not Found",
 	}
 }
 
 func InternalServerErrorResponse() response {
 	return response{
 		http.StatusInternalServerError,
-		"Internal server error",
+		"Internal Server Error",
 	}
 }
 
