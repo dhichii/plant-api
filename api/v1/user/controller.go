@@ -3,7 +3,6 @@ package user
 import (
 	"net/http"
 	"plant-api/api/common"
-	"plant-api/api/middleware"
 	"plant-api/business"
 	"plant-api/business/user"
 	"strconv"
@@ -23,14 +22,6 @@ func NewController(service user.Service) *Controller {
 
 // Controller to create user
 func (controller *Controller) Create(c echo.Context) error {
-	// Validate token and authorize if role is super
-	claims, err := middleware.ParseJWT(c)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
-	}
-	if !common.ValidateByRole("super", claims.Role) {
-		return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
-	}
 	newUser := user.User{}
 	c.Bind(&newUser)
 	newUser.Role = "admin"
@@ -52,14 +43,6 @@ func (controller *Controller) Create(c echo.Context) error {
 
 // Controller to get all users
 func (controller *Controller) GetAll(c echo.Context) error {
-	// Validate token and authorize if role is super
-	claims, err := middleware.ParseJWT(c)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
-	}
-	if !common.ValidateByRole("super", claims.Role) {
-		return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
-	}
 	users, err := controller.service.GetAll()
 	if err != nil {
 		return c.JSON(
@@ -73,16 +56,6 @@ func (controller *Controller) GetAll(c echo.Context) error {
 // Controller to get user by given id
 func (controller *Controller) Get(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
-	// Validate token and authorize if user has same id or role is super
-	claims, err := middleware.ParseJWT(c)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
-	}
-	if !common.ValidateById(id, claims.ID, claims.Role) {
-		return c.JSON(
-			http.StatusForbidden, common.ForbiddenResponse())
-	}
-
 	user, err := controller.service.Get(id)
 	if err != nil {
 		if err == business.ErrNotFound {
@@ -99,15 +72,6 @@ func (controller *Controller) Get(c echo.Context) error {
 // Controller to update user
 func (controller *Controller) Update(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
-	// Validate token and authorize if user has same id or role is super
-	claims, err := middleware.ParseJWT(c)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
-	}
-	if !common.ValidateById(id, claims.ID, claims.Role) {
-		return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
-	}
-
 	user := user.User{}
 	c.Bind(&user)
 
