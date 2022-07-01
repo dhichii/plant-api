@@ -1,21 +1,15 @@
 package common
 
 func ValidateByRole(role, claimsRole string) bool {
-	if claimsRole == "super" {
+	if claimsRole == "super" || claimsRole == role {
 		return true
 	}
-	if role != claimsRole {
-		return false
-	}
-	return true
+	return false
 }
 
-func ValidateById(id int, claimsId uint, role string) bool {
-	if role == "super" {
+func ValidateById(id int, claimsId uint, claimsRole string) bool {
+	if claimsRole == "super" || int(claimsId) == id {
 		return true
 	}
-	if int(claimsId) != id {
-		return false
-	}
-	return true
+	return false
 }
