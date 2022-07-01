@@ -3,7 +3,6 @@ package plant
 import (
 	"net/http"
 	"plant-api/api/common"
-	"plant-api/api/middleware"
 	"plant-api/business"
 	"plant-api/business/plant"
 	"strconv"
@@ -23,15 +22,6 @@ func NewController(service plant.Service) *Controller {
 
 // Controller to create plant
 func (controller *Controller) Create(c echo.Context) error {
-	// Validate token and authorize if role is admin or super
-	claims, err := middleware.ParseJWT(c)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
-	}
-	if !common.ValidateByRole("admin", claims.Role) {
-		return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
-	}
-
 	newPlant := &plant.Plant{}
 	c.Bind(newPlant)
 	if err := controller.service.Create(newPlant); err != nil {
@@ -65,15 +55,6 @@ func (controller *Controller) GetDetail(c echo.Context) error {
 
 // Controller to update plant
 func (controller *Controller) Update(c echo.Context) error {
-	// Validate token and authorize if role is admin or super
-	claims, err := middleware.ParseJWT(c)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
-	}
-	if !common.ValidateByRole("admin", claims.Role) {
-		return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
-	}
-
 	id, _ := strconv.Atoi(c.Param("id"))
 	plant := plant.Plant{}
 	c.Bind(&plant)
@@ -88,15 +69,6 @@ func (controller *Controller) Update(c echo.Context) error {
 
 // Controller to delete plant
 func (controller *Controller) Delete(c echo.Context) error {
-	// Validate token and authorize if role is admin or super
-	claims, err := middleware.ParseJWT(c)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
-	}
-	if !common.ValidateByRole("admin", claims.Role) {
-		return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
-	}
-
 	id, _ := strconv.Atoi(c.Param("id"))
 	if err := controller.service.Delete(id); err != nil {
 		if err == business.ErrNotFound {
