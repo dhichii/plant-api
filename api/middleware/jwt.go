@@ -3,8 +3,11 @@ package middleware
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"plant-api/api/common"
 	"plant-api/business/user"
 	"plant-api/config"
+	"strconv"
 	"strings"
 	"time"
 
@@ -54,4 +57,53 @@ func ParseJWT(c echo.Context) (user user.User, err error) {
 	user.ID = uint(payload["id"].(float64))
 	user.Role = payload["role"].(string)
 	return user, nil
+}
+
+// Grant user with super role
+func GrantSuper(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		claims, err := ParseJWT(c)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
+		}
+
+		if claims.Role != "super" {
+			return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
+		}
+
+		return next(c)
+	}
+}
+
+// Grant user with admin role
+func GrantAdmin(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		claims, err := ParseJWT(c)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
+		}
+
+		if claims.Role != "admin" {
+			return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
+		}
+
+		return next(c)
+	}
+}
+
+// Grant user with the same id or super role
+func GrantByIDOrSuper(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		claims, err := ParseJWT(c)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
+		}
+
+		id, _ := strconv.Atoi(c.Param("id"))
+		if claims.Role != "super" || claims.ID != uint(id) {
+			return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
+		}
+
+		return next(c)
+	}
 }
