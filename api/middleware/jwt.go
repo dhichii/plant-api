@@ -1,11 +1,9 @@
 package middleware
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"plant-api/api/common"
-	"plant-api/business/user"
 	"plant-api/config"
 	"strconv"
 	"strings"
@@ -26,18 +24,21 @@ func GenerateJWT(id int, role, secret string) (string, error) {
 	return token.SignedString([]byte(secret))
 }
 
+type Claims struct {
+	jwt.StandardClaims
+	ID   int    `json:"id"`
+	Role string `json:"role"`
+	Exp  int64  `json:"exp"`
+}
+
 // Get and parse JWT from header
-func ParseJWT(c echo.Context) (user user.User, err error) {
+func ParseJWT(c echo.Context) (*Claims, error) {
 	// Get token
-	token := c.Request().Header.Get("Authorization")
-	arrToken := strings.Split(token, " ")
-	if len(arrToken) < 2 {
-		err = errors.New("header authorization invalid value")
-		return user, err
-	}
+	header := c.Request().Header.Get("Authorization")
+	token := strings.Split(header, " ")[1]
 
 	// Parse token
-	tokenJwt, err := jwt.Parse(arrToken[1], func(token *jwt.Token) (interface{}, error) {
+	tokenJwt, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		cfg, _ := config.NewConfig()
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -45,18 +46,13 @@ func ParseJWT(c echo.Context) (user user.User, err error) {
 		return []byte(cfg.JWTSecret), nil
 	})
 	if err != nil {
-		return user, err
+		return nil, err
 	}
 
-	if !tokenJwt.Valid {
-		return user, err
+	if claims, ok := tokenJwt.Claims.(*Claims); ok && tokenJwt.Valid {
+		return claims, nil
 	}
-
-	// Store the payload
-	payload := tokenJwt.Claims.(jwt.MapClaims)
-	user.ID = uint(payload["id"].(float64))
-	user.Role = payload["role"].(string)
-	return user, nil
+	return nil, err
 }
 
 // Grant user with super role
@@ -83,7 +79,7 @@ func GrantAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
 		}
 
-		if !common.ValidateByRole("admin", claims.Role) {
+		if claims.Role != "super" && claims.Role != "admin" {
 			return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
 		}
 
@@ -100,7 +96,7 @@ func GrantByIDOrSuper(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		id, _ := strconv.Atoi(c.Param("id"))
-		if !common.ValidateById(id, claims.ID, claims.Role) {
+		if int(claims.ID) != id && claims.Role != "super" {
 			return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
 		}
 
