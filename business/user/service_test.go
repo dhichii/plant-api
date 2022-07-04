@@ -34,7 +34,6 @@ func setup() {
 		ID:       ID,
 		Name:     NAME,
 		Email:    EMAIL,
-		Password: PASSWORD,
 		Role:     ROLE,
 	}
 
@@ -99,7 +98,6 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, ID, mockUser.ID)
 		assert.Equal(t, NAME, mockUser.Name)
 		assert.Equal(t, EMAIL, mockUser.Email)
-		assert.Equal(t, PASSWORD, mockUser.Password)
 		assert.Equal(t, ROLE, mockUser.Role)
 	})
 
