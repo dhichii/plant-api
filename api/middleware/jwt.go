@@ -83,7 +83,7 @@ func GrantAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
 		}
 
-		if !common.ValidateByRole("admin", claims.Role) {
+		if claims.Role != "super" && claims.Role != "admin" {
 			return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
 		}
 
@@ -100,7 +100,7 @@ func GrantByIDOrSuper(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		id, _ := strconv.Atoi(c.Param("id"))
-		if !common.ValidateById(id, claims.ID, claims.Role) {
+		if int(claims.ID) != id && claims.Role != "super" {
 			return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
 		}
 
