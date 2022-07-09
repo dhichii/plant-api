@@ -45,12 +45,3 @@ func (s *service) Login(email, password string) (*response.Token, error) {
 	}
 	return nil, nil
 }
-
-// Match password input with hashed password
-func matchPassword(hashedPassword string, password []byte) bool {
-	byteHash := []byte(hashedPassword)
-	if err := bcrypt.CompareHashAndPassword(byteHash, password); err != nil {
-		return false
-	}
-	return true
-}

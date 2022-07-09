@@ -82,12 +82,3 @@ func (repo *repository) Update(id int, user user.User) error {
 	}
 	return nil
 }
-
-// Hash password and return string of hashed password
-func hashAndSalt(pwd []byte) string {
-	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
-	if err != nil {
-		panic("failed to hash password")
-	}
-	return string(hash)
-}
