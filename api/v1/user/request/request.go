@@ -6,7 +6,7 @@ import (
 )
 
 type Request struct {
-	Name     string `json:"string"`
+	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
