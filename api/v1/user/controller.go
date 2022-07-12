@@ -73,7 +73,7 @@ func (controller *Controller) Get(c echo.Context) error {
 // Controller to update user
 func (controller *Controller) Update(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
-	request := request.Request{}
+	request := request.UpdateRequest{}
 	c.Bind(&request)
 
 	if err := controller.service.Update(id, request.MapToModel()); err != nil {
