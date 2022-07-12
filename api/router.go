@@ -2,6 +2,7 @@ package api
 
 import (
 	"plant-api/api/middleware"
+	accountV1Controller "plant-api/api/v1/account"
 	authController "plant-api/api/v1/auth"
 	nativeV1Controller "plant-api/api/v1/native"
 	plantV1Controller "plant-api/api/v1/plant"
@@ -12,10 +13,11 @@ import (
 )
 
 type Controller struct {
-	AuthController   *authController.Controller
-	UserV1Controller *userV1Controller.Controller
-	NativeController *nativeV1Controller.Controller
-	PlantController  *plantV1Controller.Controller
+	AuthController    *authController.Controller
+	AccountController *accountV1Controller.Controller
+	UserV1Controller  *userV1Controller.Controller
+	NativeController  *nativeV1Controller.Controller
+	PlantController   *plantV1Controller.Controller
 }
 
 func InitRouter(e *echo.Echo, controller Controller, jwtSecret string) {
@@ -27,6 +29,18 @@ func InitRouter(e *echo.Echo, controller Controller, jwtSecret string) {
 
 	// Auth route
 	v1.POST("/login", controller.AuthController.Login)
+
+	// Account route
+	authV1.PUT(
+		"/account/email/:id",
+		controller.AccountController.UpdateEmail,
+		middleware.GrantByIDOrSuper,
+	)
+	authV1.PUT(
+		"/account/password/:id",
+		controller.AccountController.UpdatePassword,
+		middleware.GrantByIDOrSuper,
+	)
 
 	// User Admin route
 	authV1.POST("/admin", controller.UserV1Controller.Create, middleware.GrantSuper)
