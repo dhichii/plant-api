@@ -2,20 +2,20 @@ package modules
 
 import (
 	"plant-api/api"
-	ac "plant-api/api/v1/auth"
-	uc "plant-api/api/v1/user"
-	nc "plant-api/api/v1/native"
-	pc "plant-api/api/v1/plant"
-	as "plant-api/business/auth"
-	us "plant-api/business/user"
-	pns "plant-api/business/plant_native"
-	ns "plant-api/business/native"
-	ps "plant-api/business/plant"
+	authController "plant-api/api/v1/auth"
+	nativeController "plant-api/api/v1/native"
+	plantController "plant-api/api/v1/plant"
+	userController "plant-api/api/v1/user"
+	authService "plant-api/business/auth"
+	nativeService "plant-api/business/native"
+	plantService "plant-api/business/plant"
+	plantNativeService "plant-api/business/plant_native"
+	userService "plant-api/business/user"
 	"plant-api/config"
-	ur "plant-api/repositories/user"
-	nr "plant-api/repositories/native"
-	pr "plant-api/repositories/plant"
-	pnr "plant-api/repositories/plant_native"
+	nativeRepository "plant-api/repositories/native"
+	plantRepository "plant-api/repositories/plant"
+	plantNativeRepository "plant-api/repositories/plant_native"
+	userRepository "plant-api/repositories/user"
 
 	"gorm.io/gorm"
 )
@@ -23,34 +23,34 @@ import (
 // Register the modules
 func RegisterModules(db *gorm.DB, cfg config.Config) api.Controller {
 	// Initiate user
-	userRepository := ur.NewMysqlRepository(db)
-	userService := us.NewService(userRepository)
-	userV1Controller := uc.NewController(userService)
+	userRepo := userRepository.NewMysqlRepository(db)
+	userService := userService.NewService(userRepo)
+	userController := userController.NewController(userService)
 
 	// Initiate auth
-	authService := as.NewService(userRepository, cfg)
-	authController := ac.NewController(authService)
+	authService := authService.NewService(userRepo, cfg)
+	authController := authController.NewController(authService)
 
 	// Initiate native
-	nativeRepo := nr.NewMysqlRepository(db)
-	nativeService := ns.NewService(nativeRepo)
-	nativeController := nc.NewController(nativeService)
+	nativeRepo := nativeRepository.NewMysqlRepository(db)
+	nativeService := nativeService.NewService(nativeRepo)
+	nativeController := nativeController.NewController(nativeService)
 
 	// Initiate plant native
-	pNativeRepo := pnr.NewMysqlRepository(db)
-	pNativeService := pns.NewService(pNativeRepo)
+	pNativeRepo := plantNativeRepository.NewMysqlRepository(db)
+	pNativeService := plantNativeService.NewService(pNativeRepo)
 
 	// Initiate plant
-	plantRepo := pr.NewMysqlRepository(db)
-	plantService := ps.NewService(plantRepo, nativeService, pNativeService)
-	plantController := pc.NewController(plantService)
+	plantRepo := plantRepository.NewMysqlRepository(db)
+	plantService := plantService.NewService(plantRepo, nativeService, pNativeService)
+	plantController := plantController.NewController(plantService)
 
 	// Put all controllers together
 	controllers := api.Controller{
-		UserV1Controller: userV1Controller,
-		AuthController: authController,
+		UserV1Controller: userController,
+		AuthController:   authController,
 		NativeController: nativeController,
-		PlantController: plantController,
+		PlantController:  plantController,
 	}
 	return controllers
 }
