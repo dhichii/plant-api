@@ -6,8 +6,7 @@ import (
 	"plant-api/business"
 	"plant-api/business/user"
 	"plant-api/config"
-
-	"golang.org/x/crypto/bcrypt"
+	"plant-api/utils"
 )
 
 type service struct {
@@ -33,8 +32,7 @@ func (s *service) Login(email, password string) (*response.Token, error) {
 		return nil, err
 	}
 	if user != nil {
-		matchPassword := matchPassword(user.Password, []byte(password))
-		if user.Email == email && matchPassword {
+		if utils.MatchPassword(user.Password, password) {
 			token, err := middleware.GenerateJWT(int(user.ID), user.Role, s.cfg.JWTSecret)
 			if err != nil {
 				return nil, business.ErrBadRequest
@@ -44,13 +42,4 @@ func (s *service) Login(email, password string) (*response.Token, error) {
 		}
 	}
 	return nil, nil
-}
-
-// Match password input with hashed password
-func matchPassword(hashedPassword string, password []byte) bool {
-	byteHash := []byte(hashedPassword)
-	if err := bcrypt.CompareHashAndPassword(byteHash, password); err != nil {
-		return false
-	}
-	return true
 }
