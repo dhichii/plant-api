@@ -11,10 +11,20 @@ type Request struct {
 	Password string `json:"password"`
 }
 
+type UpdateRequest struct {
+	Name string `json:"name"`
+}
+
 func (req *Request) MapToModel() user.User {
 	return user.User{
 		Name:     req.Name,
 		Email:    req.Email,
 		Password: utils.HashPassword(req.Password),
+	}
+}
+
+func (req *UpdateRequest) MapToModel() user.User {
+	return user.User{
+		Name: req.Name,
 	}
 }
