@@ -27,7 +27,8 @@ func (controller *Controller) Create(c echo.Context) error {
 	c.Bind(&request)
 	newUser := request.MapToModel()
 	newUser.Role = "admin"
-	if err := controller.service.Create(newUser); err != nil {
+	id, err := controller.service.Create(newUser)
+	if err != nil {
 		if err == business.ErrConflict {
 			return utils.CreateResponse(
 				c,
@@ -37,7 +38,7 @@ func (controller *Controller) Create(c echo.Context) error {
 		}
 		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return utils.CreateWithoutDataResponse(c, http.StatusCreated)
+	return utils.CreateResponse(c, http.StatusCreated, utils.CreatedResponse{ID: id})
 }
 
 // Controller to get all users

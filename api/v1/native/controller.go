@@ -22,10 +22,11 @@ func NewController(service native.Service) *Controller {
 func (controller *Controller) Create(c echo.Context) error {
 	newNative := &native.Native{}
 	c.Bind(&newNative)
-	if err := controller.service.Create(newNative); err != nil {
+	id, err := controller.service.Create(newNative)
+	if err != nil {
 		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return utils.CreateWithoutDataResponse(c, http.StatusCreated)
+	return utils.CreateResponse(c, http.StatusCreated, utils.CreatedResponse{ID: id})
 }
 
 // Controller to get all native

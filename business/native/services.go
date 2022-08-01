@@ -14,11 +14,12 @@ func NewService(repo Repository) Service {
 }
 
 // Create new native and store into database
-func (s *service) Create(native *Native) error {
-	if err := s.repository.Create(native); err != nil {
-		return err
+func (s *service) Create(native *Native) (uint, error) {
+	id, err := s.repository.Create(native)
+	if err != nil {
+		return 0, err
 	}
-	return nil
+	return id, nil
 }
 
 // Get all natives

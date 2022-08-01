@@ -24,10 +24,11 @@ func NewController(service plant.Service) *Controller {
 func (controller *Controller) Create(c echo.Context) error {
 	newPlant := &plant.Plant{}
 	c.Bind(newPlant)
-	if err := controller.service.Create(newPlant); err != nil {
+	id, err := controller.service.Create(newPlant)
+	if err != nil {
 		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return utils.CreateWithoutDataResponse(c, http.StatusCreated)
+	return utils.CreateResponse(c, http.StatusCreated, utils.CreatedResponse{ID: id})
 }
 
 // Controller to get all plant by given name from query

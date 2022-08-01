@@ -17,11 +17,11 @@ func NewMysqlRepository(db *gorm.DB) *repository {
 }
 
 // Create new user and store into database
-func (repo *repository) Create(user user.User) error {
+func (repo *repository) Create(user user.User) (uint, error) {
 	if err := repo.db.Create(&user).Error; err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return user.ID, nil
 }
 
 // Get all users

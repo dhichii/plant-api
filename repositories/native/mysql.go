@@ -17,11 +17,11 @@ func NewMysqlRepository(db *gorm.DB) *repository {
 }
 
 // Create new native and store into database
-func (repo *repository) Create(native *native.Native) error {
+func (repo *repository) Create(native *native.Native) (uint, error) {
 	if err := repo.db.Create(&native).Error; err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return native.ID, nil
 }
 
 // Get all natives
