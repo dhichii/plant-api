@@ -17,10 +17,6 @@ type baseWithoutData struct {
 	Message string `json:"message"`
 }
 
-type Reason struct {
-	Reason interface{} `json:"reason"`
-}
-
 func CreateResponse(c echo.Context, httpCode int, data interface{}) error {
 	response := &base{
 		Code:    httpCode,
