@@ -33,7 +33,7 @@ func (controller *Controller) Create(c echo.Context) error {
 			return utils.CreateResponse(
 				c,
 				http.StatusConflict,
-				utils.Reason{Reason: "email is already used"},
+				utils.ErrorResponse{Reason: "email is already used"},
 			)
 		}
 		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)

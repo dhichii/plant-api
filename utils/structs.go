@@ -1,6 +1,6 @@
 package utils
 
-type Reason struct {
+type ErrorResponse struct {
 	Reason interface{} `json:"reason"`
 }
 

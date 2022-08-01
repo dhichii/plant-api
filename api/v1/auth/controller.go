@@ -35,7 +35,7 @@ func (controller *Controller) Login(c echo.Context) error {
 		return utils.CreateResponse(
 			c,
 			http.StatusUnauthorized,
-			utils.Reason{Reason: "invalid email or password"},
+			utils.ErrorResponse{Reason: "invalid email or password"},
 		)
 	}
 	return utils.CreateResponse(c, http.StatusOK, token)
