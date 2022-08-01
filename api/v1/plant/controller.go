@@ -64,7 +64,7 @@ func (controller *Controller) Update(c echo.Context) error {
 		}
 		return c.JSON(http.StatusInternalServerError, err)
 	}
-	return c.JSON(http.StatusOK, common.SuccessResponseWithoutData())
+	return c.NoContent(http.StatusNoContent)
 }
 
 // Controller to delete plant
@@ -76,5 +76,5 @@ func (controller *Controller) Delete(c echo.Context) error {
 		}
 		return c.JSON(http.StatusInternalServerError, err)
 	}
-	return c.JSON(http.StatusOK, common.SuccessResponseWithoutData())
+	return c.NoContent(http.StatusNoContent)
 }

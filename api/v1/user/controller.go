@@ -85,5 +85,5 @@ func (controller *Controller) Update(c echo.Context) error {
 			common.InternalServerErrorResponse(),
 		)
 	}
-	return c.JSON(http.StatusOK, common.SuccessResponseWithoutData())
+	return c.NoContent(http.StatusNoContent)
 }
