@@ -2,10 +2,10 @@ package user
 
 import (
 	"net/http"
-	"plant-api/api/common"
 	"plant-api/api/v1/user/request"
 	"plant-api/business"
 	"plant-api/business/user"
+	"plant-api/utils"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -27,31 +27,27 @@ func (controller *Controller) Create(c echo.Context) error {
 	c.Bind(&request)
 	newUser := request.MapToModel()
 	newUser.Role = "admin"
-	if err := controller.service.Create(newUser); err != nil {
+	id, err := controller.service.Create(newUser)
+	if err != nil {
 		if err == business.ErrConflict {
-			return c.JSON(
+			return utils.CreateResponse(
+				c,
 				http.StatusConflict,
-				common.ConflictResponse("email is already used"),
+				utils.ErrorResponse{Reason: "email is already used"},
 			)
 		}
-		return c.JSON(
-			http.StatusInternalServerError,
-			common.InternalServerErrorResponse(),
-		)
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return c.JSON(http.StatusCreated, common.SuccessResponseWithoutData())
+	return utils.CreateResponse(c, http.StatusCreated, utils.CreatedResponse{ID: id})
 }
 
 // Controller to get all users
 func (controller *Controller) GetAll(c echo.Context) error {
 	users, err := controller.service.GetAll()
 	if err != nil {
-		return c.JSON(
-			http.StatusInternalServerError,
-			common.InternalServerErrorResponse(),
-		)
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return c.JSON(http.StatusOK, users)
+	return utils.CreateResponse(c, http.StatusOK, users)
 }
 
 // Controller to get user by given id
@@ -60,14 +56,11 @@ func (controller *Controller) Get(c echo.Context) error {
 	user, err := controller.service.Get(id)
 	if err != nil {
 		if err == business.ErrNotFound {
-			return c.JSON(http.StatusNotFound, common.NotFoundResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusNotFound)
 		}
-		return c.JSON(
-			http.StatusInternalServerError,
-			common.InternalServerErrorResponse(),
-		)
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return c.JSON(http.StatusOK, user)
+	return utils.CreateResponse(c, http.StatusOK, user)
 }
 
 // Controller to update user
@@ -78,12 +71,9 @@ func (controller *Controller) Update(c echo.Context) error {
 
 	if err := controller.service.Update(id, request.MapToModel()); err != nil {
 		if err == business.ErrNotFound {
-			return c.JSON(http.StatusNotFound, common.NotFoundResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusNotFound)
 		}
-		return c.JSON(
-			http.StatusInternalServerError,
-			common.InternalServerErrorResponse(),
-		)
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return c.JSON(http.StatusOK, common.SuccessResponseWithoutData())
+	return c.NoContent(http.StatusNoContent)
 }

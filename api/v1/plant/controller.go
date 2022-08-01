@@ -2,9 +2,9 @@ package plant
 
 import (
 	"net/http"
-	"plant-api/api/common"
 	"plant-api/business"
 	"plant-api/business/plant"
+	"plant-api/utils"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -24,10 +24,11 @@ func NewController(service plant.Service) *Controller {
 func (controller *Controller) Create(c echo.Context) error {
 	newPlant := &plant.Plant{}
 	c.Bind(newPlant)
-	if err := controller.service.Create(newPlant); err != nil {
-		return c.JSON(http.StatusInternalServerError, common.InternalServerErrorResponse())
+	id, err := controller.service.Create(newPlant)
+	if err != nil {
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return c.JSON(http.StatusCreated, common.SuccessResponseWithoutData())
+	return utils.CreateResponse(c, http.StatusCreated, utils.CreatedResponse{ID: id})
 }
 
 // Controller to get all plant by given name from query
@@ -35,9 +36,9 @@ func (controller *Controller) GetAll(c echo.Context) error {
 	name := c.QueryParam("name")
 	plant, err := controller.service.GetAll(name)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, common.InternalServerErrorResponse())
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return c.JSON(http.StatusOK, plant)
+	return utils.CreateResponse(c, http.StatusOK, plant)
 }
 
 // Controller to get plant detail
@@ -46,11 +47,11 @@ func (controller *Controller) GetDetail(c echo.Context) error {
 	plant, err := controller.service.GetDetail(id)
 	if err != nil {
 		if err == business.ErrNotFound {
-			return c.JSON(http.StatusNotFound, common.NotFoundResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusNotFound)
 		}
-		return c.JSON(http.StatusInternalServerError, err)
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return c.JSON(http.StatusOK, plant)
+	return utils.CreateResponse(c, http.StatusOK, plant)
 }
 
 // Controller to update plant
@@ -60,11 +61,11 @@ func (controller *Controller) Update(c echo.Context) error {
 	c.Bind(&plant)
 	if err := controller.service.Update(id, plant); err != nil {
 		if err == business.ErrNotFound {
-			return c.JSON(http.StatusNotFound, common.NotFoundResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusNotFound)
 		}
-		return c.JSON(http.StatusInternalServerError, err)
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return c.JSON(http.StatusOK, common.SuccessResponseWithoutData())
+	return c.NoContent(http.StatusNoContent)
 }
 
 // Controller to delete plant
@@ -72,9 +73,9 @@ func (controller *Controller) Delete(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	if err := controller.service.Delete(id); err != nil {
 		if err == business.ErrNotFound {
-			return c.JSON(http.StatusNotFound, common.NotFoundResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusNotFound)
 		}
-		return c.JSON(http.StatusInternalServerError, err)
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return c.JSON(http.StatusOK, common.SuccessResponseWithoutData())
+	return c.NoContent(http.StatusNoContent)
 }

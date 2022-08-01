@@ -19,14 +19,15 @@ func NewService(repo Repository) Service {
 Create new user and store into database
 will return ErrConflict if email is already used
 */
-func (s *service) Create(user User) error {
-	if err := s.repository.Create(user); err != nil {
+func (s *service) Create(user User) (uint, error) {
+	id, err := s.repository.Create(user)
+	if err != nil {
 		if strings.Contains(err.Error(), "Error 1062") {
-			return business.ErrConflict
+			return 0, business.ErrConflict
 		}
-		return err
+		return 0, err
 	}
-	return nil
+	return id, nil
 }
 
 // Get all users

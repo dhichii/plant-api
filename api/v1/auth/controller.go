@@ -2,9 +2,9 @@ package auth
 
 import (
 	"net/http"
-	"plant-api/api/common"
 	"plant-api/business"
 	"plant-api/business/auth"
+	"plant-api/utils"
 
 	"github.com/labstack/echo/v4"
 )
@@ -27,17 +27,16 @@ func (controller *Controller) Login(c echo.Context) error {
 	token, err := controller.service.Login(loginRequest.Email, loginRequest.Password)
 	if err != nil {
 		if err == business.ErrBadRequest {
-			return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
 		}
-		return c.JSON(
-			http.StatusInternalServerError,
-			common.InternalServerErrorResponse(),
-		)
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
 	if token == nil {
-		return c.JSON(
+		return utils.CreateResponse(
+			c,
 			http.StatusUnauthorized,
-			common.UnauthorizedResponse("Invalid email or password"))
+			utils.ErrorResponse{Reason: "invalid email or password"},
+		)
 	}
-	return c.JSON(http.StatusOK, token)
+	return utils.CreateResponse(c, http.StatusOK, token)
 }
