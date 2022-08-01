@@ -2,8 +2,8 @@ package native
 
 import (
 	"net/http"
-	"plant-api/api/common"
 	"plant-api/business/native"
+	"plant-api/utils"
 
 	"github.com/labstack/echo/v4"
 )
@@ -22,17 +22,18 @@ func NewController(service native.Service) *Controller {
 func (controller *Controller) Create(c echo.Context) error {
 	newNative := &native.Native{}
 	c.Bind(&newNative)
-	if err := controller.service.Create(newNative); err != nil {
-		return c.JSON(http.StatusInternalServerError, common.InternalServerErrorResponse())
+	id, err := controller.service.Create(newNative)
+	if err != nil {
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return c.JSON(http.StatusCreated, common.SuccessResponseWithoutData())
+	return utils.CreateResponse(c, http.StatusCreated, utils.CreatedResponse{ID: id})
 }
 
 // Controller to get all native
 func (controller *Controller) GetAll(c echo.Context) error {
 	natives, err := controller.service.GetAll()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, common.InternalServerErrorResponse())
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
-	return c.JSON(http.StatusOK, natives)
+	return utils.CreateResponse(c, http.StatusOK, natives)
 }

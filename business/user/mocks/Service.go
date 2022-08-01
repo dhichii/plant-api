@@ -18,17 +18,24 @@ type Service struct {
 }
 
 // Create provides a mock function with given fields: _a0
-func (_m *Service) Create(_a0 user.User) error {
+func (_m *Service) Create(_a0 user.User) (uint, error) {
 	ret := _m.Called(_a0)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(user.User) error); ok {
+	var r0 uint
+	if rf, ok := ret.Get(0).(func(user.User) uint); ok {
 		r0 = rf(_a0)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(uint)
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(user.User) error); ok {
+		r1 = rf(_a0)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // Get provides a mock function with given fields: id

@@ -27,7 +27,7 @@ func NewService(
 }
 
 // Create new plant and store into database
-func (s *service) Create(plant *Plant) error {
+func (s *service) Create(plant *Plant) (uint, error) {
 	newPlant := &Plant{
 		Name:          plant.Name,
 		BotanicalName: plant.BotanicalName,
@@ -53,10 +53,11 @@ func (s *service) Create(plant *Plant) error {
 			newPlant.Natives = append(newPlant.Natives, nativeData)
 		}
 	}
-	if err := s.repository.Create(newPlant); err != nil {
-		return err
+	id, err := s.repository.Create(newPlant)
+	if err != nil {
+		return 0, err
 	}
-	return nil
+	return id, nil
 }
 
 // Get all plants by given name

@@ -20,11 +20,11 @@ func NewMysqlRepository(db *gorm.DB) *repository {
 type plantModel plant.Plant
 
 // Create new plant and store into database
-func (repo *repository) Create(plant *plant.Plant) error {
+func (repo *repository) Create(plant *plant.Plant) (uint, error) {
 	if err := repo.db.Create(plant).Error; err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return plant.ID, nil
 }
 
 /*
@@ -34,8 +34,8 @@ it will return all plants if name is null
 func (repo *repository) GetAll(name string) ([]response.Plant, error) {
 	plants := []response.Plant{}
 	if err := repo.db.Where("deleted_at IS NULL AND name LIKE '%" + name + "%'").
-	Find(&plants).
-	Error; err != nil {
+		Find(&plants).
+		Error; err != nil {
 		return nil, err
 	}
 	return plants, nil

@@ -3,7 +3,7 @@ package middleware
 import (
 	"fmt"
 	"net/http"
-	"plant-api/api/common"
+	"plant-api/utils"
 	"plant-api/config"
 	"strconv"
 	"strings"
@@ -60,11 +60,11 @@ func GrantSuper(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		claims, err := ParseJWT(c)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
 		}
 
 		if claims.Role != "super" {
-			return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusForbidden)
 		}
 
 		return next(c)
@@ -76,11 +76,11 @@ func GrantAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		claims, err := ParseJWT(c)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
 		}
 
 		if claims.Role != "super" && claims.Role != "admin" {
-			return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusForbidden)
 		}
 
 		return next(c)
@@ -92,12 +92,12 @@ func GrantByIDOrSuper(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		claims, err := ParseJWT(c)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
 		}
 
 		id, _ := strconv.Atoi(c.Param("id"))
 		if int(claims.ID) != id && claims.Role != "super" {
-			return c.JSON(http.StatusForbidden, common.ForbiddenResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusForbidden)
 		}
 
 		return next(c)

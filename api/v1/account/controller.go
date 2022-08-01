@@ -2,9 +2,9 @@ package account
 
 import (
 	"net/http"
-	"plant-api/api/common"
 	"plant-api/api/v1/account/request"
 	"plant-api/business/account"
+	"plant-api/utils"
 	"strconv"
 	"strings"
 
@@ -27,16 +27,13 @@ func (controller *Controller) UpdateEmail(c echo.Context) error {
 	request := request.EmailRequest{}
 	c.Bind(&request)
 	if request.Email == "" {
-		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
+		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
 	}
 	if err := controller.service.UpdateEmail(id, request.Email); err != nil {
 		if strings.Contains(err.Error(), "not found") {
-			return c.JSON(http.StatusNotFound, common.NotFoundResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusNotFound)
 		}
-		return c.JSON(
-			http.StatusInternalServerError,
-			common.InternalServerErrorResponse(),
-		)
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
 	return c.NoContent(http.StatusNoContent)
 }
@@ -47,16 +44,13 @@ func (controller *Controller) UpdatePassword(c echo.Context) error {
 	request := request.PasswordRequest{}
 	c.Bind(&request)
 	if request.Password == "" {
-		return c.JSON(http.StatusBadRequest, common.BadRequestResponse())
+		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
 	}
 	if err := controller.service.UpdatePassword(id, request.HashPassword()); err != nil {
 		if strings.Contains(err.Error(), "not found") {
-			return c.JSON(http.StatusNotFound, common.NotFoundResponse())
+			return utils.CreateWithoutDataResponse(c, http.StatusNotFound)
 		}
-		return c.JSON(
-			http.StatusInternalServerError,
-			common.InternalServerErrorResponse(),
-		)
+		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
 	return c.NoContent(http.StatusNoContent)
 }

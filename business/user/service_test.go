@@ -31,10 +31,10 @@ var (
 
 func setup() {
 	mockUser = response.User{
-		ID:       ID,
-		Name:     NAME,
-		Email:    EMAIL,
-		Role:     ROLE,
+		ID:    ID,
+		Name:  NAME,
+		Email: EMAIL,
+		Role:  ROLE,
 	}
 
 	mockListUser = append(mockListUser, mockUser)
@@ -54,20 +54,21 @@ func TestMain(m *testing.M) {
 
 func TestCreate(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		mockRepo.On("Create", mock.Anything).Return(nil).Once()
-		err := us.Create(mockNewUser)
+		mockRepo.On("Create", mock.Anything).Return(ID, nil).Once()
+		id, err := us.Create(mockNewUser)
 		assert.NoError(t, err)
+		assert.Equal(t, ID, id)
 	})
 
 	t.Run("failed", func(t *testing.T) {
-		mockRepo.On("Create", mock.Anything).Return(errors.New("test error")).Once()
-		err := us.Create(mockNewUser)
+		mockRepo.On("Create", mock.Anything).Return(uint(0), errors.New("test error")).Once()
+		_, err := us.Create(mockNewUser)
 		assert.Error(t, err)
 	})
 
 	t.Run("failed email already used", func(t *testing.T) {
-		mockRepo.On("Create", mock.Anything).Return(errors.New("Error 1062")).Once()
-		err := us.Create(mockNewUser)
+		mockRepo.On("Create", mock.Anything).Return(uint(0), errors.New("Error 1062")).Once()
+		_, err := us.Create(mockNewUser)
 		assert.Error(t, err)
 		assert.Equal(t, business.ErrConflict, err)
 	})
