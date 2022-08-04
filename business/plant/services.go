@@ -77,6 +77,12 @@ func (s *service) GetDetail(id int) (*response.PlantDetail, error) {
 		}
 		return nil, err
 	}
+
+	natives, err := s.repository.GetAllNativesByPlantID(id)
+	if err != nil {
+		return nil, err
+	}
+	plant.Natives = natives
 	return plant, nil
 }
 
