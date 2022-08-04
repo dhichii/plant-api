@@ -1,6 +1,7 @@
 package plant
 
 import (
+	"errors"
 	"plant-api/api/v1/plant/response"
 	"plant-api/business"
 	"plant-api/business/native"
@@ -77,11 +78,17 @@ func (s *service) GetDetail(id int) (*response.PlantDetail, error) {
 		}
 		return nil, err
 	}
+
+	natives, err := s.repository.GetAllNativesByPlantID(id)
+	if err != nil {
+		return nil, err
+	}
+	plant.Natives = natives
 	return plant, nil
 }
 
 /*
-Update existing plant in database
+Update existing plant and plant natives in database
 will return ErrNotFound when plant is not exist
 */
 func (s *service) Update(id int, plant Plant) error {
@@ -91,6 +98,21 @@ func (s *service) Update(id int, plant Plant) error {
 			return business.ErrNotFound
 		}
 		return err
+	}
+	if plant.Natives != nil {
+		for _, native := range plant.Natives {
+			err := s.repository.GetNativeByID(int(native.ID))
+			if err != nil {
+				if err.Error() == "record not found" {
+					return errors.New("native not found")
+				}
+				return err
+			}
+		}
+		if err := s.repository.UpdatePlantNatives(id, plant.Natives); err != nil {
+			return err
+		}
+		plant.Natives = nil
 	}
 	if err := s.repository.Update(id, plant); err != nil {
 		return err
