@@ -17,9 +17,6 @@ func NewMysqlRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-// Type used to update plant
-type plantModel plant.Plant
-
 // Create new plant and store into database
 func (repo *repository) Create(plant *plant.Plant) (uint, error) {
 	if err := repo.db.Create(plant).Error; err != nil {
@@ -68,20 +65,9 @@ func (repo *repository) GetAllNativesByPlantID(id int) ([]*response.Native, erro
 
 // Update plant and store it into database
 func (repo *repository) Update(id int, plant plant.Plant) error {
-	if err := repo.db.Model(&plant).
+	if err := repo.db.Model(&plant).Omit("Natives").
 		Where("id", id).
-		Updates(
-			plantModel{
-				Name:          plant.Name,
-				BotanicalName: plant.BotanicalName,
-				Type:          plant.Type,
-				Difficulty:    plant.Difficulty,
-				Description:   plant.Description,
-				WateringTime:  plant.WateringTime,
-				HowToGrow:     plant.HowToGrow,
-				Soil:          plant.Soil,
-			},
-		).Error; err != nil {
+		Updates(&plant).Error; err != nil {
 		return err
 	}
 	return nil
