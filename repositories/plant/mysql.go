@@ -2,6 +2,7 @@ package plant
 
 import (
 	"plant-api/api/v1/plant/response"
+	"plant-api/business/native"
 	"plant-api/business/plant"
 
 	"gorm.io/gorm"
@@ -84,6 +85,23 @@ func (repo *repository) Update(id int, plant plant.Plant) error {
 		return err
 	}
 	return nil
+}
+
+// UpdatePlantNatives will update plant natives and store it into database
+func (repo *repository) UpdatePlantNatives(id int, plantNatives []*native.Native) error {
+	plant := &plant.Plant{ID: uint(id)}
+	if err := repo.db.Model(plant).Association("Natives").Replace(plantNatives); err != nil {
+		return err
+	}
+	return nil
+}
+
+/*
+GetNativeByID get native by native id
+it will return nil if native is found
+*/
+func (repo *repository) GetNativeByID(id int) error {
+	return repo.db.First(new(native.Native), id).Error
 }
 
 // Delete plant by given id
