@@ -33,7 +33,8 @@ it will return all plants if name is null
 */
 func (repo *repository) GetAll(name string) ([]response.Plant, error) {
 	plants := []response.Plant{}
-	if err := repo.db.Where("deleted_at IS NULL AND name LIKE '%" + name + "%'").
+	if err := repo.db.Preload("Natives").
+		Where("deleted_at IS NULL AND name LIKE '%" + name + "%'").
 		Find(&plants).
 		Error; err != nil {
 		return nil, err
