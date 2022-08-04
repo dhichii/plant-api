@@ -7,6 +7,7 @@ type Repository interface {
 	Create(*Plant) (uint, error)
 	GetAll(name string) ([]response.Plant, error)
 	GetDetail(id int) (*response.PlantDetail, error)
+	GetAllNativesByPlantID(id int) ([]*response.Native, error)
 	Update(id int, plant Plant) error
 	Delete(id int) error
 }
