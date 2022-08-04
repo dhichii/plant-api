@@ -2,6 +2,7 @@ package plant
 
 import (
 	"plant-api/api/v1/plant/response"
+	"plant-api/business/native"
 	"plant-api/business/plant"
 
 	"gorm.io/gorm"
@@ -15,9 +16,6 @@ type repository struct {
 func NewMysqlRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
-
-// Type used to update plant
-type plantModel plant.Plant
 
 // Create new plant and store into database
 func (repo *repository) Create(plant *plant.Plant) (uint, error) {
@@ -67,23 +65,29 @@ func (repo *repository) GetAllNativesByPlantID(id int) ([]*response.Native, erro
 
 // Update plant and store it into database
 func (repo *repository) Update(id int, plant plant.Plant) error {
-	if err := repo.db.Model(&plant).
+	if err := repo.db.Model(&plant).Omit("Natives").
 		Where("id", id).
-		Updates(
-			plantModel{
-				Name:          plant.Name,
-				BotanicalName: plant.BotanicalName,
-				Type:          plant.Type,
-				Difficulty:    plant.Difficulty,
-				Description:   plant.Description,
-				WateringTime:  plant.WateringTime,
-				HowToGrow:     plant.HowToGrow,
-				Soil:          plant.Soil,
-			},
-		).Error; err != nil {
+		Updates(&plant).Error; err != nil {
 		return err
 	}
 	return nil
+}
+
+// UpdatePlantNatives will update plant natives and store it into database
+func (repo *repository) UpdatePlantNatives(id int, plantNatives []*native.Native) error {
+	plant := &plant.Plant{ID: uint(id)}
+	if err := repo.db.Model(plant).Association("Natives").Replace(plantNatives); err != nil {
+		return err
+	}
+	return nil
+}
+
+/*
+GetNativeByID get native by native id
+it will return nil if native is found
+*/
+func (repo *repository) GetNativeByID(id int) error {
+	return repo.db.First(new(native.Native), id).Error
 }
 
 // Delete plant by given id

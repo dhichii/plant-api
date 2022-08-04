@@ -1,6 +1,9 @@
 package plant
 
-import "plant-api/api/v1/plant/response"
+import (
+	"plant-api/api/v1/plant/response"
+	"plant-api/business/native"
+)
 
 // Ingoing port for plant
 type Repository interface {
@@ -9,6 +12,8 @@ type Repository interface {
 	GetDetail(id int) (*response.PlantDetail, error)
 	GetAllNativesByPlantID(id int) ([]*response.Native, error)
 	Update(id int, plant Plant) error
+	UpdatePlantNatives(id int, plantNatives []*native.Native) error
+	GetNativeByID(id int) error
 	Delete(id int) error
 }
 

@@ -63,6 +63,13 @@ func (controller *Controller) Update(c echo.Context) error {
 		if err == business.ErrNotFound {
 			return utils.CreateWithoutDataResponse(c, http.StatusNotFound)
 		}
+		if err.Error() == "native not found" {
+			return utils.CreateResponse(
+				c,
+				http.StatusNotFound,
+				utils.ErrorResponse{Reason: err.Error()},
+			)
+		}
 		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
 	return c.NoContent(http.StatusNoContent)
