@@ -5,7 +5,6 @@ on:
       - main
 jobs:
   deploy-to-ec2:
-    needs: unit-test
     runs-on: ubuntu-latest
     steps:
       - name: executing remote ssh commands
