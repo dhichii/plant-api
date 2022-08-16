@@ -7,7 +7,7 @@ import (
 
 // Ingoing port for plant
 type Repository interface {
-	Create(*Plant) (uint, error)
+	Create(Plant) (uint, error)
 	GetAll(name string) ([]response.Plant, error)
 	GetDetail(id int) (*response.PlantDetail, error)
 	GetAllNativesByPlantID(id int) ([]*response.Native, error)
@@ -19,7 +19,7 @@ type Repository interface {
 
 // Outgoing port for plant
 type Service interface {
-	Create(*Plant) (uint, error)
+	Create(Plant) (uint, error)
 	GetAll(name string) ([]response.Plant, error)
 	GetDetail(id int) (*response.PlantDetail, error)
 	Update(id int, plant Plant) error

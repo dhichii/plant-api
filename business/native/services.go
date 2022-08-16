@@ -26,8 +26,3 @@ func (s *service) Create(native *Native) (uint, error) {
 func (s *service) GetAll() ([]response.Native, error) {
 	return s.repository.GetAll()
 }
-
-// Get native by given name
-func (s *service) GetByName(name string) (*Native, error) {
-	return s.repository.GetByName(name)
-}
