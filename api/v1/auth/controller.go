@@ -2,6 +2,7 @@ package auth
 
 import (
 	"net/http"
+	"plant-api/api/v1/auth/request"
 	"plant-api/business"
 	"plant-api/business/auth"
 	"plant-api/utils"
@@ -21,7 +22,7 @@ func NewController(service auth.Service) *Controller {
 
 // Controller to login
 func (controller *Controller) Login(c echo.Context) error {
-	loginRequest := auth.Auth{}
+	loginRequest := request.Request{}
 	if err := c.Bind(&loginRequest); err != nil {
 		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
 	}
