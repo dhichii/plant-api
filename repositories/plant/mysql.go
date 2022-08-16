@@ -18,8 +18,8 @@ func NewMysqlRepository(db *gorm.DB) *repository {
 }
 
 // Create new plant and store into database
-func (repo *repository) Create(plant *plant.Plant) (uint, error) {
-	if err := repo.db.Create(plant).Error; err != nil {
+func (repo *repository) Create(plant plant.Plant) (uint, error) {
+	if err := repo.db.Create(&plant).Error; err != nil {
 		return 0, err
 	}
 	return plant.ID, nil

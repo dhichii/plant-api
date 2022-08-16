@@ -28,7 +28,7 @@ func NewService(
 }
 
 // Create new plant and store into database
-func (s *service) Create(plant *Plant) (uint, error) {
+func (s *service) Create(plant Plant) (uint, error) {
 	/*
 		Find native by name
 		create new native if native not found
