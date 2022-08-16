@@ -34,13 +34,11 @@ func (s *service) Create(plant *Plant) (uint, error) {
 		create new native if native not found
 	*/
 	for _, nativeRequest := range plant.Natives {
-		nativeData, _ := s.nativeService.GetByName(nativeRequest.Name)
-		if nativeData == nil {
-			newNative := &native.Native{Name: nativeRequest.Name}
-			s.nativeService.Create(newNative)
-			newPlant.Natives = append(newPlant.Natives, newNative)
-		} else {
-			newPlant.Natives = append(newPlant.Natives, nativeData)
+		if err := s.repository.GetNativeByID(int(nativeRequest.ID)); err != nil {
+			if err.Error() == "record not found" {
+				return nativeRequest.ID, business.ErrNotFound
+			}
+			return 0, err
 		}
 	}
 	id, err := s.repository.Create(plant)
