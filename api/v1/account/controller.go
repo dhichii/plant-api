@@ -25,7 +25,9 @@ func NewController(service account.Service) *Controller {
 func (controller *Controller) UpdateEmail(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	request := request.EmailRequest{}
-	c.Bind(&request)
+	if err := c.Bind(&request); err != nil {
+		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
+	}
 	if request.Email == "" {
 		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
 	}
@@ -42,7 +44,9 @@ func (controller *Controller) UpdateEmail(c echo.Context) error {
 func (controller *Controller) UpdatePassword(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	request := request.PasswordRequest{}
-	c.Bind(&request)
+	if err := c.Bind(&request); err != nil {
+		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
+	}
 	if request.Password == "" {
 		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
 	}

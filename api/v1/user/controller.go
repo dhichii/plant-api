@@ -24,7 +24,9 @@ func NewController(service user.Service) *Controller {
 // Controller to create user
 func (controller *Controller) Create(c echo.Context) error {
 	request := request.Request{}
-	c.Bind(&request)
+	if err := c.Bind(&request); err != nil {
+		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
+	}
 	newUser := request.MapToModel()
 	newUser.Role = "admin"
 	id, err := controller.service.Create(newUser)
@@ -67,7 +69,9 @@ func (controller *Controller) Get(c echo.Context) error {
 func (controller *Controller) Update(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	request := request.UpdateRequest{}
-	c.Bind(&request)
+	if err := c.Bind(&request); err != nil {
+		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
+	}
 
 	if err := controller.service.Update(id, request.MapToModel()); err != nil {
 		if err == business.ErrNotFound {

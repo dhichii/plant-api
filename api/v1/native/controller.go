@@ -21,7 +21,9 @@ func NewController(service native.Service) *Controller {
 // Controller to create native
 func (controller *Controller) Create(c echo.Context) error {
 	newNative := &native.Native{}
-	c.Bind(&newNative)
+	if err := c.Bind(&newNative); err != nil {
+		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
+	}
 	id, err := controller.service.Create(newNative)
 	if err != nil {
 		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)

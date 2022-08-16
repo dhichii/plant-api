@@ -25,7 +25,9 @@ func NewController(service plant.Service) *Controller {
 // Controller to create plant
 func (controller *Controller) Create(c echo.Context) error {
 	newPlant := request.Request{}
-	c.Bind(newPlant)
+	if err := c.Bind(&newPlant); err != nil {
+		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
+	}
 	id, err := controller.service.Create(newPlant.MapToModel())
 	if err != nil {
 		if err == business.ErrNotFound {
@@ -63,7 +65,9 @@ func (controller *Controller) GetDetail(c echo.Context) error {
 func (controller *Controller) Update(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	existingPlant := request.Request{}
-	c.Bind(&existingPlant)
+	if err := c.Bind(&existingPlant); err != nil {
+		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
+	}
 	if err := controller.service.Update(id, existingPlant.MapToModel()); err != nil {
 		if err == business.ErrNotFound {
 			return utils.CreateWithoutDataResponse(c, http.StatusNotFound)
