@@ -1,6 +1,7 @@
 package plant
 
 import (
+	"fmt"
 	"net/http"
 	"plant-api/business"
 	"plant-api/business/plant"
@@ -26,6 +27,9 @@ func (controller *Controller) Create(c echo.Context) error {
 	c.Bind(newPlant)
 	id, err := controller.service.Create(newPlant)
 	if err != nil {
+		if err == business.ErrNotFound {
+			return utils.CreateResponse(c, http.StatusNotFound, fmt.Sprintf("native with id %d not found", id))
+		}
 		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
 	return utils.CreateResponse(c, http.StatusCreated, utils.CreatedResponse{ID: id})
