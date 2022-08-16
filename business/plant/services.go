@@ -4,25 +4,18 @@ import (
 	"errors"
 	"plant-api/api/v1/plant/response"
 	"plant-api/business"
-	"plant-api/business/native"
 	plantnative "plant-api/business/plant_native"
 )
 
 type service struct {
 	repository     Repository
-	nativeService  native.Service
 	pNativeService plantnative.Service
 }
 
 // Construct plant service object
-func NewService(
-	repo Repository,
-	nativeService native.Service,
-	pNativeRepo plantnative.Repository,
-) Service {
+func NewService(repo Repository, pNativeRepo plantnative.Repository) Service {
 	return &service{
 		repo,
-		nativeService,
 		pNativeRepo,
 	}
 }

@@ -50,7 +50,7 @@ func RegisterModules(db *gorm.DB, cfg config.Config) api.Controller {
 
 	// Initiate plant
 	plantRepo := plantRepository.NewMysqlRepository(db)
-	plantService := plantService.NewService(plantRepo, nativeService, pNativeService)
+	plantService := plantService.NewService(plantRepo, pNativeService)
 	plantController := plantController.NewController(plantService)
 
 	// Put all controllers together
