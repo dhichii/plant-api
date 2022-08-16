@@ -25,7 +25,7 @@ func NewController(service plant.Service) *Controller {
 // Controller to create plant
 func (controller *Controller) Create(c echo.Context) error {
 	newPlant := request.Request{}
-	c.Bind(newPlant)
+	c.Bind(&newPlant)
 	id, err := controller.service.Create(newPlant.MapToModel())
 	if err != nil {
 		if err == business.ErrNotFound {
