@@ -29,17 +29,6 @@ func NewService(
 
 // Create new plant and store into database
 func (s *service) Create(plant *Plant) (uint, error) {
-	newPlant := &Plant{
-		Name:          plant.Name,
-		BotanicalName: plant.BotanicalName,
-		Type:          plant.Type,
-		Difficulty:    plant.Difficulty,
-		Description:   plant.Description,
-		Natives:       []*native.Native{},
-		WateringTime:  plant.WateringTime,
-		HowToGrow:     plant.HowToGrow,
-		Soil:          plant.Soil,
-	}
 	/*
 		Find native by name
 		create new native if native not found
@@ -54,7 +43,7 @@ func (s *service) Create(plant *Plant) (uint, error) {
 			newPlant.Natives = append(newPlant.Natives, nativeData)
 		}
 	}
-	id, err := s.repository.Create(newPlant)
+	id, err := s.repository.Create(plant)
 	if err != nil {
 		return 0, err
 	}
