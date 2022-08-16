@@ -1,7 +1,9 @@
 package plant
 
 import (
+	"fmt"
 	"net/http"
+	"plant-api/api/v1/plant/request"
 	"plant-api/business"
 	"plant-api/business/plant"
 	"plant-api/utils"
@@ -22,10 +24,15 @@ func NewController(service plant.Service) *Controller {
 
 // Controller to create plant
 func (controller *Controller) Create(c echo.Context) error {
-	newPlant := &plant.Plant{}
-	c.Bind(newPlant)
-	id, err := controller.service.Create(newPlant)
+	newPlant := request.Request{}
+	if err := c.Bind(&newPlant); err != nil {
+		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
+	}
+	id, err := controller.service.Create(newPlant.MapToModel())
 	if err != nil {
+		if err == business.ErrNotFound {
+			return utils.CreateResponse(c, http.StatusNotFound, fmt.Sprintf("native with id %d not found", id))
+		}
 		return utils.CreateWithoutDataResponse(c, http.StatusInternalServerError)
 	}
 	return utils.CreateResponse(c, http.StatusCreated, utils.CreatedResponse{ID: id})
@@ -57,9 +64,11 @@ func (controller *Controller) GetDetail(c echo.Context) error {
 // Controller to update plant
 func (controller *Controller) Update(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
-	plant := plant.Plant{}
-	c.Bind(&plant)
-	if err := controller.service.Update(id, plant); err != nil {
+	existingPlant := request.Request{}
+	if err := c.Bind(&existingPlant); err != nil {
+		return utils.CreateWithoutDataResponse(c, http.StatusBadRequest)
+	}
+	if err := controller.service.Update(id, existingPlant.MapToModel()); err != nil {
 		if err == business.ErrNotFound {
 			return utils.CreateWithoutDataResponse(c, http.StatusNotFound)
 		}
