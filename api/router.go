@@ -32,21 +32,21 @@ func InitRouter(e *echo.Echo, controller Controller, jwtSecret string) {
 
 	// Account route
 	authV1.PATCH(
-		"/account/email/:id",
+		"/accounts/email/:id",
 		controller.AccountController.UpdateEmail,
 		middleware.GrantByIDOrSuper,
 	)
 	authV1.PATCH(
-		"/account/password/:id",
+		"/accounts/password/:id",
 		controller.AccountController.UpdatePassword,
 		middleware.GrantByIDOrSuper,
 	)
 
 	// User Admin route
-	authV1.POST("/admin", controller.UserV1Controller.Create, middleware.GrantSuper)
-	authV1.GET("/admin", controller.UserV1Controller.GetAll, middleware.GrantSuper)
-	authV1.GET("/admin/:id", controller.UserV1Controller.Get, middleware.GrantByIDOrSuper)
-	authV1.PATCH("/admin/:id", controller.UserV1Controller.Update, middleware.GrantByIDOrSuper)
+	authV1.POST("/admins", controller.UserV1Controller.Create, middleware.GrantSuper)
+	authV1.GET("/admins", controller.UserV1Controller.GetAll, middleware.GrantSuper)
+	authV1.GET("/admins/:id", controller.UserV1Controller.Get, middleware.GrantByIDOrSuper)
+	authV1.PATCH("/admins/:id", controller.UserV1Controller.Update, middleware.GrantByIDOrSuper)
 
 	// Native route
 	authV1.POST("/natives", controller.NativeController.Create, middleware.GrantAdmin)
